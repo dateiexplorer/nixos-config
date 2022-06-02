@@ -2,53 +2,52 @@
 
 {
   imports = [
-    ./programs/editors/neovim.nix
+    ./programs/editors/nvim
   ];
 
   # Define the username and home directory.
-  home.username = "${user}";
-  home.homeDirectory = "/home/${user}";
+  home.username = "${user.name}";
+  home.homeDirectory = "/home/${user.name}";
 
-  home.sessionVariables = {
-  };
+  # Define shell variables.
+  home.sessionVariables = { };
 
   # Install packages for this user.
   home.packages = with pkgs; [
     # Add user packages here
-    
-    # CLI tools
-    openconnect
 
-    # Graphical programms
-    thunderbird
-    libreoffice
-    gimp
-    discord
-    vscode
+    # Often used CLI tools
+    ffmpeg
+    yt-dlp
+
+    # Often used graphical tools
     keepassxc
+    discord
     musescore
+    gimp
     vlc
-
-    # Add full LaTeX (TeXLive) installation.
-    (pkgs.texlive.combine {
-        inherit (texlive) scheme-full;
-    })
-
-    # Programming tools
-    jetbrains.idea-community 
-    gradle
+    vscode
   ];
+
+  programs.bash.enable = true;
 
   # Configure git.
   programs.git = {
     enable = true;
-    userEmail = "mail@dateiexplorer.de";
-    userName = "Justus Röderer";
+    userEmail = "${user.email}";
+    userName = "${user.description}";
   };
- 
+
   # Configure go.
   programs.go = {
     enable = true;
+    goPath = "Dokumente/go";
+  };
+
+  # Configure direnv.
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
   };
 
   # Configure syncthing.
@@ -56,6 +55,34 @@
     enable = true;
   };
 
+  # Enable for graphical session management.
+  # This is needed to make home.sessionVariables work in graphical sessions,
+  # such as XFCE, Plasma or Gnome
+  xsession.enable = true;
+
   # Enable home manager.
   programs.home-manager.enable = true;
+
+  # Theming
+  gtk = {
+    enable = true;
+    theme = {
+      name = "Arc-Dark";
+      package = pkgs.arc-theme;
+    };
+    cursorTheme = {
+      name = "Adwaita";
+      size = 16;
+    };
+    iconTheme = {
+      name = "Tela dark";
+      package = pkgs.tela-icon-theme;
+    };
+  };
+
+  #qt = {
+  #  enable = true;
+  #  platformTheme = "gtk";
+  #};
+
 }

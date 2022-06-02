@@ -10,8 +10,11 @@
     ./hardware-configuration.nix
   ];
 
-  # Enable the latest Linux kernel
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  # -- Linux kernel
+  # Enable the default Linux kernel
+  boot.kernelPackages = pkgs.linuxPackages;
+  # Lates Linux kernel
+  # boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # -- Bootloader
   # Use the systemd-boot EFI boot loader.
@@ -25,7 +28,7 @@
   networking.networkmanager.enable = true;
   # Neccessary for the XFCE desktop to enable nm-applet at startup.
   programs.nm-applet.enable = true;
-  
+
   # Set your time zone.
   time.timeZone = "Europe/Berlin";
 
@@ -51,11 +54,11 @@
   # Configure the X11 windowing system.
   services.xserver = {
     enable = true;
-    
+
     displayManager = {
-      lightdm.enable = true; 
+      lightdm.enable = true;
     };
-    
+
     desktopManager = {
       # Disable xterm as desktopManager
       xterm.enable = false;
@@ -82,11 +85,11 @@
   # -- Printing
   # Enable CUPS to print documents.
   services.printing.enable = true;
-  services.printing.drivers = with pkgs; [ 
+  services.printing.drivers = with pkgs; [
     # Include drivers for the EPSON printer.  
     pkgs.epson-escpr2
   ];
- 
+
   # Enable automatically printer/scanner detection.
   services.avahi.enable = true;
   services.avahi.nssmdns = true;
@@ -98,15 +101,20 @@
 
   # -- User accounts
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.${user} = {
+  users.users.${user.name} = {
     isNormalUser = true;
     # As a default value use the username as password.
     # Change this password after first login.
-    initialPassword = "${user}";
-    description = "Justus Röderer";
-    extraGroups = [ 
-      "wheel" "networkmanager" "video" "audio" "lp" "vboxusers"
-    ]; 
+    initialPassword = "${user.name}";
+    description = "${user.description}";
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+      "video"
+      "audio"
+      "lp"
+      "vboxusers"
+    ];
   };
 
   # -- Packages
@@ -117,27 +125,40 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     neovim # Do not forget to add an editor to edit configuration.nix!
-    
-    # CLI tools
+
+    # Often used CLI tools
     wget
     git
     killall
+    unzip
+    openconnect
 
-    # Graphical tools
+    # Often used graphical tools
     firefox
+    thunderbird
+    libreoffice
+    okular
+    xfce.xfburn
 
     # XFCE configuration and tools
     xfce.mousepad
     xfce.xfce4-whiskermenu-plugin
     xfce.thunar-volman
 
-    # Customization
+    # Add full LaTeX (TeXLive) installation.
+    (pkgs.texlive.combine {
+      inherit (texlive) scheme-full;
+    })
+
+    # Programming tools
+    jetbrains.idea-community
+    gradle
   ];
 
   # -- Nix package manager
   # nix.package = pkgs.nixUnstable;
-  nix.package = pkgs.nixFlakes;  
-  
+  nix.package = pkgs.nixFlakes;
+
   # This is required when using experimental nix package.
   nix.extraOptions = ''
     experimental-features = nix-command flakes
@@ -145,9 +166,9 @@
 
   # Optimise syslinks.
   nix.settings.auto-optimise-store = true;
- 
+
   # -- Additional programs
-  # Install java system wide.
+  # Install java system wide and set the JAVA_HOME path.
   programs.java.enable = true;
 
   # -- Virtualization
@@ -167,7 +188,7 @@
   # };
 
   # List services that you want to enable:
- 
+
   # -- Bluetooth
   # https://nixos.wiki/wiki/Bluetooth 
   hardware.bluetooth = {
@@ -179,7 +200,7 @@
 
   # -- Flatpak
   services.flatpak.enable = true;
-  
+
   # Required by flatpak.
   xdg.portal = {
     enable = true;
