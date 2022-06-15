@@ -69,7 +69,10 @@ endfunction
 "autocmd VimEnter * call StartUp()
 
 " ### VimWiki
-let g:vimwiki_list = [{'path': '$HOME/Sync/Wiki'}]
+let g:vimwiki_list = [{ 
+    \ 'path': '$HOME/Sync/Wiki', 
+    \ 'syntax': 'markdown',  
+    \ 'ext': '.md' }]
 
 " ### Keybindings
 let mapleader=" "

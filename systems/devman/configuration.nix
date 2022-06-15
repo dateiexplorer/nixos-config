@@ -1,30 +1,34 @@
-# Edit this configuration file to define what should be installed on your
-# system. Help is available in the configuration.nix(5) man page and in the
-# NixOS manual (accessible by running ‘nixos-help’).
+# Edit this configuration file to define what should be installed on
+# your system. Help is available in the configuration.nix(5) man page
+# and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, user, ... }:
 
 {
-  imports = [
-    # Include the results of the hardware scan.
-    ./hardware-configuration.nix
-  ];
+  imports =
+    [
+      # Include the results of the hardware scan.
+      ./hardware-configuration.nix
+    ];
 
-  # -- Linux kernel
+  # Linux kernel.
   # Enable the default Linux kernel
   boot.kernelPackages = pkgs.linuxPackages;
   # Lates Linux kernel
   # boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  # -- Bootloader
+  # Bootloader.
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # -- Networking
-  networking.hostName = "devman"; # Define your hostname.
+  # Networking.
+  # Define your hostname.
+  networking.hostName = "devman";
   # Enables wireless support via wpa_supplicant.
   # networking.wireless.enable = true;  
+
+  # Enable networking 
   networking.networkmanager.enable = true;
   # Neccessary for the XFCE desktop to enable nm-applet at startup.
   programs.nm-applet.enable = true;
@@ -50,7 +54,7 @@
   #   keyMap = "us";
   # };
 
-  # -- X11
+  # X11
   # Configure the X11 windowing system.
   services.xserver = {
     enable = true;
@@ -82,7 +86,7 @@
   # https://grahamc.com/blog/nixos-on-framework
   services.fprintd.enable = true;
 
-  # -- Printing
+  # Printing.
   # Enable CUPS to print documents.
   services.printing.enable = true;
   services.printing.drivers = with pkgs; [
@@ -94,12 +98,27 @@
   services.avahi.enable = true;
   services.avahi.nssmdns = true;
 
-  # -- Sound
+  # Sound.
   # Enable sound.
   sound.enable = true;
-  hardware.pulseaudio.enable = true;
+  # Disable pulseaudio, use pipewire instead
+  hardware.pulseaudio.enable = false;
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    # If you want to use JACK applications, uncomment this
+    #jack.enable = true
 
-  # -- User accounts
+    # use the example sessions manager (no others are packaged yet so this is
+    # enabled by default, no need to redefine it in your config for now)
+    #media-session.enable = true;
+  };
+
+
+  # User accounts.
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.${user.name} = {
     isNormalUser = true;
@@ -117,8 +136,8 @@
     ];
   };
 
-  # -- Packages
-  # Needed to enable 'unfree' packages.
+  # Packages.
+  # Allow unfree packages. 
   nixpkgs.config.allowUnfree = true;
 
   # List packages installed in system profile. To search, run:
@@ -139,11 +158,15 @@
     libreoffice
     okular
     xfce.xfburn
+    libsForQt5.kdenlive
 
     # XFCE configuration and tools
     xfce.mousepad
     xfce.xfce4-whiskermenu-plugin
+    xfce.xfce4-pulseaudio-plugin 
     xfce.thunar-volman
+
+    pavucontrol
 
     # Add full LaTeX (TeXLive) installation.
     (pkgs.texlive.combine {
@@ -155,23 +178,27 @@
     gradle
   ];
 
-  # -- Nix package manager
-  # nix.package = pkgs.nixUnstable;
+  # Nix package manager.
+  #nix.package = pkgs.nixUnstable;
+
+  # Use the flakes feature.
   nix.package = pkgs.nixFlakes;
 
-  # This is required when using experimental nix package.
+  # This is required when using experimental nix.
   nix.extraOptions = ''
     experimental-features = nix-command flakes
   '';
 
-  # Optimise syslinks.
+  # Optimise nix store.
   nix.settings.auto-optimise-store = true;
 
-  # -- Additional programs
+
+  # Additional programs.
+
   # Install java system wide and set the JAVA_HOME path.
   programs.java.enable = true;
 
-  # -- Virtualization
+  # Virtualization
   # Configure virtualbox.
   virtualisation.virtualbox.host = {
     enable = true;
@@ -189,7 +216,7 @@
 
   # List services that you want to enable:
 
-  # -- Bluetooth
+  # Bluetooth.
   # https://nixos.wiki/wiki/Bluetooth 
   hardware.bluetooth = {
     enable = true;
@@ -198,9 +225,8 @@
   # Enable blueman to get the blueman-applet as mentioned in the wiki. 
   services.blueman.enable = true;
 
-  # -- Flatpak
+  # Flatpak
   services.flatpak.enable = true;
-
   # Required by flatpak.
   xdg.portal = {
     enable = true;

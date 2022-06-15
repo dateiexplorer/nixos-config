@@ -14,7 +14,7 @@
       # Quality of life
       # Opens document where you left it 
       vim-lastplace
-      
+
       # Print double quotes/brackets/etc.
       #auto-pairs
       vim-closer

@@ -10,7 +10,8 @@
   home.homeDirectory = "/home/${user.name}";
 
   # Define shell variables.
-  home.sessionVariables = { };
+  home.sessionVariables = { 
+  };
 
   # Install packages for this user.
   home.packages = with pkgs; [
