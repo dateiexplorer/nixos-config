@@ -1,3 +1,5 @@
+call plug#end()
+
 " ### General apperance 
 set nocompatible " Disable compatibility to old-time vi
 
@@ -69,10 +71,20 @@ endfunction
 "autocmd VimEnter * call StartUp()
 
 " ### VimWiki
-let g:vimwiki_list = [{ 
-    \ 'path': '$HOME/Sync/Wiki', 
+
+" The public vimwiki synchornized with git and GitHub
+let public_wiki = {
+    \ 'path': '$HOME/Öffentlich/Wiki/', 
     \ 'syntax': 'markdown',  
-    \ 'ext': '.md' }]
+    \ 'ext': '.md' }
+
+" My private vimwiki synchronized through Syncthing
+let private_wiki = {
+    \ 'path': '$HOME/Sync/Wiki/', 
+    \ 'syntax': 'markdown',  
+    \ 'ext': '.md' }
+
+let g:vimwiki_list = [public_wiki, private_wiki] 
 
 " ### Keybindings
 let mapleader=" "
@@ -93,9 +105,7 @@ map <silent> <Leader>t :NERDTreeToggle<CR>
 
 " Lightline support for theme changing (dark/light) on the fly
 " Credits: https://github.com/itchyny/lightline.vim/issues/424
-"autocmd OptionSet background
-"    \ execute 'source' 
-"    \ globpath(&rtp, 'autoload/lightline/colorscheme/PaperColor.vim')
-"    \ | call lightline#colorscheme() | call lightline#update()
-
-
+autocmd OptionSet background
+    \ execute 'source' 
+    \ globpath(&rtp, 'autoload/lightline/colorscheme/PaperColor.vim')
+    \ | call lightline#colorscheme() | call lightline#update()
